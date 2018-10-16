@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import request
 
+import base64
+import urllib
 import json
 import requests
 
@@ -8,8 +10,6 @@ app = Flask(__name__)
 
 # Group's token
 token = 'tkn149Nfu7Sl6rRLzzjW39xgayDFEOkXRGu6cAg2LMLbFAQTvl4Qey4jp9gJnurfzdaPz:CBAMCNMMEBABABABA'
-# Webhook
-webhook_url = 'https://2f69d480.ngrok.io'
 # Last chat's identifier
 last_chat_id = None
 
@@ -22,8 +22,12 @@ def entry():
     print(message_data)
     return 'Ok'
 
-@app.route('/setwebhook', methods=['GET'])
-def set_webhook():
+@app.route('/setwebhook/<webhook_address>', methods=['GET'])
+def set_webhook(webhook_address):
+    if not webhook_address:
+        return "Error! No webhook address."
+    webhook_address_b64 = urllib.parse.unquote(webhook_address)
+    webhook_url = base64.b64decode(webhook_address_b64).decode()
     data = {'url': webhook_url}
     header = {'Content-Type': 'application/json;charset=utf-8'}
     request_address = 'https://api.ok.ru/graph/me/subscribe?access_token={token}'.format(token=token)
