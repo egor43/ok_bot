@@ -15,6 +15,10 @@ last_chat_id = None
 
 @app.route('/', methods=['POST'])
 def entry():
+    """
+    Recives messages
+    :return: Always return the answer: OK
+    """
     global last_chat_id
     new_message = request.data.decode()
     message_data = json.loads(new_message)
@@ -24,6 +28,11 @@ def entry():
 
 @app.route('/settoken/<bot_token>', methods=['GET'])
 def set_token(bot_token):
+    """
+    Sets the bot token
+    :param bot_token: bot token
+    :return: set bot token
+    """
     bot_token = decode_parameter(bot_token)
     if not bot_token:
         return "Error! Token is none."
@@ -33,6 +42,11 @@ def set_token(bot_token):
 
 @app.route('/setwebhook/<webhook_address>', methods=['GET'])
 def set_webhook(webhook_address):
+    """
+    Sets the webhook url
+    :param webhook_address: url on which you need to install as a webhook
+    :return: response from server
+    """
     webhook_address = decode_parameter(webhook_address)
     if not webhook_address:
         return "Error! No webhook address."
@@ -44,6 +58,10 @@ def set_webhook(webhook_address):
 
 @app.route('/getwebhook', methods=['GET'])
 def get_webhook():
+    """
+    Getting installed webhooks
+    :return: installed webhooks
+    """
     header = {'Content-Type': 'application/json;charset=utf-8'}
     request_address = 'https://api.ok.ru/graph/me/subscriptions?access_token={token}'.format(token=token)
     response = requests.get(request_address, headers=header)
@@ -51,6 +69,10 @@ def get_webhook():
 
 @app.route('/removewebhook', methods=['GET'])
 def remove_webhook():
+    """
+    Remove all webhooks
+    :return: server response for each remote webhook
+    """
     result = {}
     # Get installed webhooks
     webhooks = get_webhook()
@@ -68,6 +90,11 @@ def remove_webhook():
 
 @app.route('/sendmessage/<message>', methods=['GET'])
 def send_message(message):
+    """
+    Send message into last chat
+    :param message: meaasge
+    :return: response from server
+    """
     if not message:
         return "Error! No message."
     if not last_chat_id:
@@ -80,6 +107,11 @@ def send_message(message):
     return response.text
 
 def decode_parameter(parameter):
+    """
+    Decoding parameter received in url
+    :param parameter: parameter received in url
+    :return: decoded parameter
+    """
     if not parameter:
         return None
     parameter_b64 = urllib.parse.unquote(parameter)
