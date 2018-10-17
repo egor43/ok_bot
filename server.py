@@ -9,7 +9,7 @@ import requests
 app = Flask(__name__)
 
 # Group's token
-token = 'tkn149Nfu7Sl6rRLzzjW39xgayDFEOkXRGu6cAg2LMLbFAQTvl4Qey4jp9gJnurfzdaPz:CBAMCNMMEBABABABA'
+token = None
 # Last chat's identifier
 last_chat_id = None
 
@@ -21,6 +21,15 @@ def entry():
     last_chat_id = message_data['recipient']['chat_id']
     print(message_data)
     return 'Ok'
+
+@app.route('/settoken/<bot_token>', methods=['GET'])
+def set_token(bot_token):
+    bot_token = decode_parameter(bot_token)
+    if not bot_token:
+        return "Error! Token is none."
+    global token
+    token = bot_token
+    return token
 
 @app.route('/setwebhook/<webhook_address>', methods=['GET'])
 def set_webhook(webhook_address):
