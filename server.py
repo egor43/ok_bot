@@ -24,11 +24,10 @@ def entry():
 
 @app.route('/setwebhook/<webhook_address>', methods=['GET'])
 def set_webhook(webhook_address):
+    webhook_address = decode_parameter(webhook_address)
     if not webhook_address:
         return "Error! No webhook address."
-    webhook_address_b64 = urllib.parse.unquote(webhook_address)
-    webhook_url = base64.b64decode(webhook_address_b64).decode()
-    data = {'url': webhook_url}
+    data = {'url': webhook_address}
     header = {'Content-Type': 'application/json;charset=utf-8'}
     request_address = 'https://api.ok.ru/graph/me/subscribe?access_token={token}'.format(token=token)
     response = requests.post(request_address, data=json.dumps(data), headers=header)
@@ -70,6 +69,12 @@ def send_message(message):
     response = requests.post(request_address, data=json.dumps(data), headers=header)
     print(str(response))
     return response.text
+
+def decode_parameter(parameter):
+    if not parameter:
+        return None
+    parameter_b64 = urllib.parse.unquote(parameter)
+    return base64.b64decode(parameter_b64).decode()
 
 if __name__ == '__main__':
     app.run()
